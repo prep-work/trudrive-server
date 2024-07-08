@@ -4,6 +4,9 @@ const router = express.Router()
 const { check } = require('express-validator')
 
 const { signup, login } = require('../controllers/authController')
+const { verifyUser } = require('../middleware/verify')
+const { addANewDocument } = require('../controllers/userController')
+const docsUpload = require('../middleware/imageUpload')
 
 // Signup route
 router.post(
@@ -47,6 +50,17 @@ router.post(
         .withMessage('Password length is at least 8 character'),
 
     login
+)
+
+const multipleUpload = docsUpload.fields([{name: 'docs'}])
+
+router.post(
+    '/docs/add',
+
+    verifyUser,
+    multipleUpload,
+    
+    addANewDocument
 )
 
 module.exports = router
